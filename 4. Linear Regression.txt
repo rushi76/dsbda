@@ -1,0 +1,127 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 4
+------------------------------------------------------------
+Title of the Assignment
+Create a Linear Regression Model using Python to predict house prices using the Boston Housing Dataset.
+
+Objective
+To understand how to implement and evaluate a Linear Regression model for predicting continuous target variables.
+
+------------------------------------------------------------
+CODE
+------------------------------------------------------------
+# Step 1 Import required libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_boston
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Step 2 Load Boston Housing Dataset
+boston = load_boston()
+df = pd.DataFrame(boston.data, columns=boston.feature_names)
+df['PRICE'] = boston.target
+
+print(First 5 rows of dataset)
+print(df.head())
+
+# Step 3 Check for missing values
+print(nMissing values in dataset)
+print(df.isnull().sum())
+
+# Step 4 Split data into features (X) and target (y)
+X = df.drop('PRICE', axis=1)
+y = df['PRICE']
+
+# Step 5 Split dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 6 Create Linear Regression model
+model = LinearRegression()
+
+# Step 7 Train the model
+model.fit(X_train, y_train)
+
+# Step 8 Predict house prices
+y_pred = model.predict(X_test)
+
+# Step 9 Evaluate model performance
+mse = mean_squared_error(y_test, y_pred)
+rmse = np.sqrt(mse)
+r2 = r2_score(y_test, y_pred)
+
+print(nModel Evaluation Results)
+print(fMean Squared Error (MSE) {mse.2f})
+print(fRoot Mean Squared Error (RMSE) {rmse.2f})
+print(fR² Score {r2.2f})
+
+# Step 10 Visualize actual vs predicted prices
+plt.scatter(y_test, y_pred, color='blue')
+plt.xlabel(Actual Prices)
+plt.ylabel(Predicted Prices)
+plt.title(Actual vs Predicted House Prices)
+plt.show()
+
+------------------------------------------------------------
+SAMPLE OUTPUT
+------------------------------------------------------------
+First 5 rows of dataset
+      CRIM    ZN  INDUS  CHAS    NOX     RM   AGE     DIS  RAD  TAX  PTRATIO   B  LSTAT  PRICE
+0  0.00632  18.0   2.31   0.0  0.538  6.575  65.2  4.0900    1  296    15.3  396.90   4.98  24.0
+1  0.02731   0.0   7.07   0.0  0.469  6.421  78.9  4.9671    2  242    17.8  396.90   9.14  21.6
+
+Model Evaluation Results
+Mean Squared Error (MSE) 24.29
+Root Mean Squared Error (RMSE) 4.93
+R² Score 0.73
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS
+------------------------------------------------------------
+• Linear Regression – predicts continuous output by fitting a straight line (y = mx + c).
+• train_test_split() – divides data into training and testing subsets.
+• fit() – trains the model on training data.
+• predict() – makes predictions on test data.
+• mean_squared_error() – measures how far predictions are from actual values.
+• r2_score() – measures how well model explains the data (closer to 1 = better).
+
+------------------------------------------------------------
+EVALUATION METRICS
+------------------------------------------------------------
+1. MSE (Mean Squared Error) – average of squared errors.
+2. RMSE (Root Mean Squared Error) – square root of MSE, same unit as output.
+3. R² Score – goodness of fit measure (0–1 scale).
+
+------------------------------------------------------------
+CONCLUSION
+------------------------------------------------------------
+A Linear Regression model was successfully implemented to predict house prices using the Boston Housing dataset.
+The model achieved a good R² score (~0.73), showing that it explains most of the variation in housing prices.
+
+------------------------------------------------------------
+VIVA QUESTIONS
+------------------------------------------------------------
+Q1. What is Linear Regression
+→ A supervised learning algorithm used to predict continuous outcomes by fitting a straight line.
+
+Q2. What is the equation of a linear regression model
+→ Y = mX + c (where m = slopecoefficients, c = intercept).
+
+Q3. What is the meaning of R² score
+→ It shows how well the model fits the data; closer to 1 means better fit.
+
+Q4. Why split data into train and test sets
+→ To evaluate the model’s performance on unseen data.
+
+Q5. What is the difference between MSE and RMSE
+→ RMSE is the square root of MSE and gives error in actual units.
+
+Q6. What are the limitations of Linear Regression
+→ Assumes linear relationship; sensitive to outliers.
+
+Q7. What are features and target variable
+→ Features (X) are input variables; target (y) is the variable we want to predict.
+
+------------------------------------------------------------

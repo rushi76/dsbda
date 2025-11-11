@@ -1,0 +1,98 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 9
+------------------------------------------------------------
+Title of the Assignment:
+Use the inbuilt dataset ‘titanic’. Plot a box plot for distribution of age with respect to each gender
+along with the information about whether they survived or not.
+
+Objective:
+To visualize how passenger age varies with gender and survival status using a box plot.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Step 2: Load Titanic Dataset
+titanic = sns.load_dataset('titanic')
+print("First 5 rows of dataset:")
+print(titanic.head())
+
+# Step 3: Check for Missing Values
+print("\nMissing values in 'age' column:", titanic['age'].isnull().sum())
+
+# Step 4: Drop Missing Age Values (for simplicity)
+titanic = titanic.dropna(subset=['age'])
+
+# Step 5: Plot Box Plot
+plt.figure(figsize=(8,6))
+sns.boxplot(x='sex', y='age', hue='survived', data=titanic, palette='coolwarm')
+plt.title('Age Distribution by Gender and Survival Status')
+plt.xlabel('Gender')
+plt.ylabel('Age')
+plt.legend(title='Survived', loc='upper right', labels=['No (0)', 'Yes (1)'])
+plt.show()
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+✅ The box plot displays:
+- X-axis: Gender (male/female)
+- Y-axis: Age
+- Hue (color): Survival status (0 = Did not survive, 1 = Survived)
+
+🟦 Blue boxes – Non-survivors  
+🟥 Red boxes – Survivors  
+
+From the plot:
+• Female survivors tend to be younger on average.  
+• Males show a wider age distribution with fewer survivors in older groups.  
+• Median age for survivors is lower compared to non-survivors.
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• sns.boxplot() – Displays data distribution through quartiles, showing median, Q1, Q3, and outliers.
+• hue='survived' – Adds color based on survival status.
+• Box length → variation in data; dots beyond whiskers → outliers.
+• Dropping missing values ensures clean visualization.
+
+------------------------------------------------------------
+INSIGHTS / OBSERVATIONS:
+------------------------------------------------------------
+1. Most female survivors are between 20–35 years old.
+2. Male survivors are fewer compared to female survivors.
+3. Older males (above 50) had lower survival rates.
+4. The dataset suggests “women and children first” pattern during evacuation.
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The box plot clearly shows gender-based and age-based survival trends.
+Females and younger passengers had higher chances of survival on the Titanic.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What does a box plot represent?
+→ It shows the distribution of data based on five summary statistics: minimum, Q1, median, Q3, and maximum.
+
+Q2. What do the whiskers in a box plot indicate?
+→ They show the spread of data beyond the quartiles; points outside are considered outliers.
+
+Q3. Why do we use hue in Seaborn boxplots?
+→ To compare distributions between multiple categorical groups.
+
+Q4. What is the inference from the Titanic box plot?
+→ Younger females had a higher survival rate compared to males.
+
+Q5. What is an outlier?
+→ A data point that lies significantly outside the normal range of values.
+
+Q6. Why are females shown to have higher survival?
+→ Due to priority evacuation policy ("women and children first") during the disaster.
+
+------------------------------------------------------------

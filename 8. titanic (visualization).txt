@@ -1,0 +1,108 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 8
+------------------------------------------------------------
+Title of the Assignment:
+Use the inbuilt dataset ‘titanic’. The dataset contains 891 rows and information about passengers
+who boarded the Titanic ship. Use Seaborn to find patterns and plot a histogram of the 'fare' column.
+
+Objective:
+To visualize and analyze how ticket prices (‘fare’) are distributed among Titanic passengers
+and find useful insights using Seaborn.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Libraries
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+# Step 2: Load Titanic Dataset
+titanic = sns.load_dataset('titanic')
+print("First 5 rows of Titanic Dataset:")
+print(titanic.head())
+
+# Step 3: Check Data Information
+print("\nDataset Info:")
+print(titanic.info())
+
+# Step 4: Basic Statistics of 'fare' Column
+print("\nFare Column Statistics:")
+print(titanic['fare'].describe())
+
+# Step 5: Plot Histogram for 'fare' Distribution
+plt.figure(figsize=(8,5))
+sns.histplot(titanic['fare'], bins=30, kde=True, color='teal')
+plt.title('Distribution of Ticket Fares on Titanic')
+plt.xlabel('Fare')
+plt.ylabel('Number of Passengers')
+plt.show()
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+First 5 rows of Titanic Dataset:
+   survived  pclass     sex   age  sibsp  parch     fare embarked  class    who  ...
+0         0       3    male  22.0      1      0   7.2500        S   Third    man
+1         1       1  female  38.0      1      0  71.2833        C   First  woman
+
+Fare Column Statistics:
+count    891.000000
+mean      32.204208
+std       49.693429
+min        0.000000
+25%        7.910400
+50%       14.454200
+75%       31.000000
+max      512.329200
+Name: fare, dtype: float64
+
+✅ Histogram Output:
+A smooth curve showing that most passengers paid lower fares (below 50),
+with a few paying high amounts (first-class tickets).
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• sns.load_dataset('titanic') – Loads the Titanic dataset directly from Seaborn.
+• describe() – Provides basic statistics like mean, median, max, etc.
+• sns.histplot() – Plots the distribution of numerical data as a histogram.
+• kde=True – Adds a smooth curve showing the data density.
+• We observe that most passengers paid lower ticket fares (around 10–40 range).
+
+------------------------------------------------------------
+INSIGHTS / OBSERVATIONS:
+------------------------------------------------------------
+1. Majority of passengers had fares below 50.
+2. Very few passengers paid premium fares (above 200).
+3. Fare distribution is right-skewed — indicating some high outliers.
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The histogram shows that Titanic ticket prices were highly skewed.
+Most tickets were affordable (for 3rd class passengers), while a small group
+of wealthy passengers paid significantly higher fares.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is data visualization?
+→ The graphical representation of data to identify trends, patterns, and outliers.
+
+Q2. What is the Titanic dataset used for?
+→ To analyze passenger data like survival rate, age, fare, and class.
+
+Q3. What does the histogram show?
+→ The frequency distribution of ticket fares among passengers.
+
+Q4. Why do we use Seaborn for visualization?
+→ It provides beautiful and easy-to-create statistical plots.
+
+Q5. What is KDE in a histogram?
+→ Kernel Density Estimate – a smooth curve representing data distribution.
+
+Q6. What kind of distribution is shown by Titanic fares?
+→ Right-skewed distribution due to few high-paying passengers.
+
+------------------------------------------------------------

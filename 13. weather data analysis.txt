@@ -1,0 +1,164 @@
+------------------------------------------------------------
+DSBDA PRACTICAL (GROUP B) - 3
+------------------------------------------------------------
+Title of the Assignment:
+Locate dataset (e.g., sample_weather.txt) for working on weather data
+which reads the text input files and finds average temperature, dew point,
+and wind speed using Hadoop MapReduce.
+
+Objective:
+To process large weather datasets using Hadoop MapReduce and calculate
+average values for key weather parameters.
+
+------------------------------------------------------------
+CODE (Java):
+------------------------------------------------------------
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WeatherAnalysis {
+
+    // Mapper Class
+    public static class WeatherMapper extends Mapper<Object, Text, Text, DoubleWritable> {
+
+        private Text parameter = new Text();
+        private DoubleWritable value = new DoubleWritable();
+
+        public void map(Object key, Text line, Context context)
+                throws IOException, InterruptedException {
+
+            // Example line: 2025-11-09,27.5,18.6,12.0
+            // Format: Date,Temperature,DewPoint,WindSpeed
+            String[] fields = line.toString().split(",");
+
+            if (fields.length == 4 && !fields[0].equalsIgnoreCase("Date")) {
+                double temperature = Double.parseDouble(fields[1]);
+                double dewPoint = Double.parseDouble(fields[2]);
+                double windSpeed = Double.parseDouble(fields[3]);
+
+                parameter.set("Temperature");
+                value.set(temperature);
+                context.write(parameter, value);
+
+                parameter.set("DewPoint");
+                value.set(dewPoint);
+                context.write(parameter, value);
+
+                parameter.set("WindSpeed");
+                value.set(windSpeed);
+                context.write(parameter, value);
+            }
+        }
+    }
+
+    // Reducer Class
+    public static class WeatherReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+
+        private DoubleWritable avgValue = new DoubleWritable();
+
+        public void reduce(Text key, Iterable<DoubleWritable> values, Context context)
+                throws IOException, InterruptedException {
+
+            double sum = 0.0;
+            int count = 0;
+
+            for (DoubleWritable val : values) {
+                sum += val.get();
+                count++;
+            }
+
+            double average = sum / count;
+            avgValue.set(average);
+            context.write(key, avgValue);
+        }
+    }
+
+    // Driver Code
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "weather analysis");
+
+        job.setJarByClass(WeatherAnalysis.class);
+        job.setMapperClass(WeatherMapper.class);
+        job.setCombinerClass(WeatherReducer.class);
+        job.setReducerClass(WeatherReducer.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(DoubleWritable.class);
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+------------------------------------------------------------
+SAMPLE INPUT (sample_weather.txt):
+------------------------------------------------------------
+Date,Temperature,DewPoint,WindSpeed
+2025-11-09,27.5,18.6,12.0
+2025-11-10,28.1,19.2,11.5
+2025-11-11,29.0,20.1,10.8
+2025-11-12,26.8,17.9,12.4
+2025-11-13,27.2,18.5,11.2
+
+------------------------------------------------------------
+SAMPLE OUTPUT (HDFS /output/part-r-00000):
+------------------------------------------------------------
+Temperature    27.72
+DewPoint       18.86
+WindSpeed      11.58
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• Each line in the dataset is split into its respective fields.
+• Mapper emits each parameter (Temperature, DewPoint, WindSpeed) with its value.
+• Reducer calculates the average for each parameter by summing values and dividing by count.
+• The output shows average readings across all entries.
+
+------------------------------------------------------------
+COMMANDS TO RUN (Hadoop local setup):
+------------------------------------------------------------
+1️⃣ hdfs dfs -mkdir /weatherinput
+2️⃣ hdfs dfs -put sample_weather.txt /weatherinput
+3️⃣ hadoop jar WeatherAnalysis.jar WeatherAnalysis /weatherinput /weatheroutput
+4️⃣ hdfs dfs -cat /weatheroutput/part-r-00000
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+This program successfully calculates the average Temperature, DewPoint,
+and WindSpeed from a large weather dataset using the Hadoop MapReduce framework.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is MapReduce used for in weather data analysis?
+→ To process and summarize large weather datasets distributed across multiple systems.
+
+Q2. How does the Mapper process the data?
+→ It extracts temperature, dew point, and wind speed from each line and emits key-value pairs.
+
+Q3. What does the Reducer do in this program?
+→ It calculates the average of all numeric values for each weather parameter.
+
+Q4. Why is Hadoop suitable for this task?
+→ It can handle large-scale distributed data processing efficiently.
+
+Q5. What would happen if one of the data lines is missing a value?
+→ That line would likely be skipped or cause an error unless handled with a validation check.
+
+Q6. What kind of output is generated?
+→ Average Temperature, DewPoint, and WindSpeed values for the dataset.
+
+------------------------------------------------------------

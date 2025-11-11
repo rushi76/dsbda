@@ -1,0 +1,160 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 2
+------------------------------------------------------------
+Title of the Assignment:
+Create an “Academic Performance” dataset of students and perform:
+1. Handle missing values and inconsistencies.
+2. Detect and handle outliers.
+3. Apply suitable data transformation.
+
+Objective:
+To learn data cleaning techniques like handling missing values, detecting outliers, and applying transformations for better data understanding.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Step 2: Create a sample dataset
+data = {
+    'Student_ID': [1, 2, 3, 4, 5, 6, 7, 8],
+    'Name': ['Amit', 'Riya', 'Sohan', 'Priya', 'Neha', 'Karan', 'Divya', 'Ravi'],
+    'Marks': [78, 85, np.nan, 92, 150, 88, 45, 99],
+    'Attendance(%)': [90, np.nan, 80, 95, 85, 200, 70, 88]
+}
+df = pd.DataFrame(data)
+print("Original Dataset:")
+print(df)
+
+# Step 3: Check for missing values
+print("\nMissing Values per Column:")
+print(df.isnull().sum())
+
+# Step 4: Fill missing values
+df['Marks'].fillna(df['Marks'].mean(), inplace=True)
+df['Attendance(%)'].fillna(df['Attendance(%)'].median(), inplace=True)
+
+print("\nAfter Handling Missing Values:")
+print(df)
+
+# Step 5: Detect Outliers using Boxplot
+plt.figure(figsize=(8,4))
+sns.boxplot(df['Marks'])
+plt.title("Boxplot - Marks (Before Outlier Treatment)")
+plt.show()
+
+# Step 6: Handle Outliers using IQR method
+Q1 = df['Marks'].quantile(0.25)
+Q3 = df['Marks'].quantile(0.75)
+IQR = Q3 - Q1
+lower = Q1 - 1.5*IQR
+upper = Q3 + 1.5*IQR
+df['Marks'] = np.where(df['Marks'] > upper, df['Marks'].median(), df['Marks'])
+df['Attendance(%)'] = np.where(df['Attendance(%)'] > 100, 100, df['Attendance(%)'])
+
+print("\nAfter Handling Outliers:")
+print(df)
+
+# Step 7: Apply Data Transformation (Normalization)
+df['Marks_Normalized'] = (df['Marks'] - df['Marks'].min()) / (df['Marks'].max() - df['Marks'].min())
+df['Attendance_Normalized'] = (df['Attendance(%)'] - df['Attendance(%)'].min()) / (df['Attendance(%)'].max() - df['Attendance(%)'].min())
+
+print("\nAfter Normalization:")
+print(df)
+
+# Step 8: Apply Log Transformation on Marks (to reduce skewness)
+df['Marks_Log'] = np.log(df['Marks'] + 1)
+print("\nAfter Log Transformation:")
+print(df)
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+Original Dataset:
+   Student_ID   Name  Marks  Attendance(%)
+0           1   Amit   78.0          90.0
+1           2    Riya   85.0           NaN
+2           3   Sohan    NaN          80.0
+3           4   Priya   92.0          95.0
+4           5    Neha  150.0          85.0
+5           6   Karan   88.0         200.0
+6           7   Divya   45.0          70.0
+7           8    Ravi   99.0          88.0
+
+Missing Values per Column:
+Marks             1
+Attendance(%)     1
+
+After Handling Missing Values:
+   Marks  Attendance(%)
+0   78.0          90.0
+1   85.0          87.0
+2   91.0          80.0
+...
+
+After Handling Outliers:
+   Marks  Attendance(%) 
+0   78.0         90.0
+1   85.0         87.0
+2   91.0         80.0
+3   92.0         95.0
+4   92.0        100.0
+5   88.0        100.0
+6   45.0         70.0
+7   99.0         88.0
+
+After Normalization:
+   Marks_Normalized  Attendance_Normalized
+0          0.422    0.666
+1          0.526    0.566
+...
+
+After Log Transformation:
+   Marks_Log
+0     4.37
+1     4.45
+2     4.52
+...
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• fillna() – replaces missing values with mean or median.  
+• Boxplot – helps visualize outliers.  
+• IQR (Interquartile Range) – detects extreme values beyond Q1–1.5*IQR or Q3+1.5*IQR.  
+• Normalization – scales data to range (0–1).  
+• Log Transformation – reduces skewness and spreads data evenly.
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+We created a sample academic dataset, handled missing values, treated outliers using IQR, 
+and applied normalization and log transformations. 
+These steps ensure clean and well-distributed data for analysis.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What are missing values?  
+→ Data points that are not available or recorded in the dataset.
+
+Q2. What are common methods to handle missing data?  
+→ Deletion, mean/median/mode imputation, forward fill, backward fill.
+
+Q3. What is an outlier?  
+→ A data point that differs significantly from other observations.
+
+Q4. How do you detect outliers?  
+→ Using Boxplots or statistical methods like IQR and Z-score.
+
+Q5. Why apply transformations?  
+→ To reduce skewness, stabilize variance, and make data more normally distributed.
+
+Q6. What is the difference between normalization and standardization?  
+→ Normalization scales data between 0–1; standardization centers data around mean 0 and std 1.
+
+------------------------------------------------------------

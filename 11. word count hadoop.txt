@@ -1,0 +1,144 @@
+------------------------------------------------------------
+DSBDA PRACTICAL (GROUP B) - 1
+------------------------------------------------------------
+Title of the Assignment:
+Write a Java program for a simple WordCount application that counts the 
+number of occurrences of each word in a given input set using the Hadoop MapReduce framework.
+
+Objective:
+To understand the basic working of Hadoop MapReduce and implement a simple WordCount program.
+
+------------------------------------------------------------
+CODE (Java):
+------------------------------------------------------------
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+
+    // Mapper Class
+    public static class TokenizerMapper
+         extends Mapper<Object, Text, Text, IntWritable>{
+
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
+
+        public void map(Object key, Text value, Context context
+                        ) throws IOException, InterruptedException {
+            String[] words = value.toString().split("\\s+");
+            for (String w : words) {
+                word.set(w);
+                context.write(word, one);
+            }
+        }
+    }
+
+    // Reducer Class
+    public static class IntSumReducer
+         extends Reducer<Text, IntWritable, Text, IntWritable> {
+        private IntWritable result = new IntWritable();
+
+        public void reduce(Text key, Iterable<IntWritable> values,
+                           Context context
+                           ) throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            result.set(sum);
+            context.write(key, result);
+        }
+    }
+
+    // Driver Code
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "word count");
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(TokenizerMapper.class);
+        job.setCombinerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+------------------------------------------------------------
+SAMPLE INPUT (input.txt):
+------------------------------------------------------------
+Hello world
+Hello Hadoop
+Hadoop is powerful
+Big Data with Hadoop
+
+------------------------------------------------------------
+SAMPLE OUTPUT (output.txt):
+------------------------------------------------------------
+Big        1
+Data       1
+Hadoop     3
+Hello      2
+is         1
+powerful   1
+with       1
+world      1
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• Mapper reads each line and splits it into words, emitting (word, 1).
+• Reducer receives all values for each word and sums them up.
+• Driver configures and runs the MapReduce job.
+• The output directory contains the final word counts.
+
+------------------------------------------------------------
+COMMANDS TO RUN (in Hadoop local setup):
+------------------------------------------------------------
+1️⃣ Create input directory:
+    hdfs dfs -mkdir /input
+2️⃣ Copy local file to HDFS:
+    hdfs dfs -put input.txt /input
+3️⃣ Run program:
+    hadoop jar WordCount.jar WordCount /input /output
+4️⃣ View output:
+    hdfs dfs -cat /output/part-r-00000
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The WordCount program demonstrates how Hadoop MapReduce splits, processes,
+and aggregates text data in a distributed manner.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is Hadoop?
+→ A framework for distributed storage and processing of large datasets using clusters.
+
+Q2. What are the main components of Hadoop?
+→ HDFS (storage) and MapReduce (processing).
+
+Q3. What is the role of Mapper and Reducer?
+→ Mapper breaks data into key-value pairs; Reducer aggregates values for each key.
+
+Q4. What are key-value pairs in MapReduce?
+→ The basic data structure used to pass data between phases.
+
+Q5. Can we run Hadoop locally?
+→ Yes, Hadoop has a standalone mode for testing and learning.
+
+Q6. What is the output of WordCount?
+→ A list of unique words and their frequencies.
+
+------------------------------------------------------------

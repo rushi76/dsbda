@@ -1,0 +1,140 @@
+------------------------------------------------------------
+DSBDA PRACTICAL (GROUP B) - 2
+------------------------------------------------------------
+Title of the Assignment:
+Design a distributed application using MapReduce which processes a log file of a system.
+
+Objective:
+To understand how to process large log files using the Hadoop MapReduce framework
+and extract meaningful information such as counting ERROR and INFO messages.
+
+------------------------------------------------------------
+CODE (Java):
+------------------------------------------------------------
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class LogAnalyzer {
+
+    // Mapper Class
+    public static class LogMapper extends Mapper<Object, Text, Text, IntWritable> {
+        private final static IntWritable one = new IntWritable(1);
+        private Text logLevel = new Text();
+
+        public void map(Object key, Text value, Context context)
+                throws IOException, InterruptedException {
+
+            String line = value.toString();
+
+            if (line.contains("ERROR")) {
+                logLevel.set("ERROR");
+                context.write(logLevel, one);
+            } else if (line.contains("INFO")) {
+                logLevel.set("INFO");
+                context.write(logLevel, one);
+            } else if (line.contains("WARN")) {
+                logLevel.set("WARN");
+                context.write(logLevel, one);
+            }
+        }
+    }
+
+    // Reducer Class
+    public static class LogReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+        private IntWritable result = new IntWritable();
+
+        public void reduce(Text key, Iterable<IntWritable> values, Context context)
+                throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            result.set(sum);
+            context.write(key, result);
+        }
+    }
+
+    // Driver Code
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, "log analyzer");
+        job.setJarByClass(LogAnalyzer.class);
+        job.setMapperClass(LogMapper.class);
+        job.setCombinerClass(LogReducer.class);
+        job.setReducerClass(LogReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}
+
+------------------------------------------------------------
+SAMPLE INPUT (system_logs.txt):
+------------------------------------------------------------
+INFO  2025-11-09 10:15:23 - System started successfully.
+WARN  2025-11-09 10:16:01 - Memory usage is high.
+ERROR 2025-11-09 10:17:45 - Database connection failed.
+INFO  2025-11-09 10:18:05 - User logged in.
+ERROR 2025-11-09 10:18:50 - File not found.
+INFO  2025-11-09 10:19:00 - Backup completed.
+
+------------------------------------------------------------
+SAMPLE OUTPUT (HDFS /output/part-r-00000):
+------------------------------------------------------------
+ERROR    2
+INFO     3
+WARN     1
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• Mapper scans each log line and emits the log level (INFO, WARN, ERROR) as key.
+• Reducer sums up the occurrences for each log level.
+• The output shows total count of each type of message in the log file.
+
+------------------------------------------------------------
+COMMANDS TO RUN (Hadoop local setup):
+------------------------------------------------------------
+1️⃣ hdfs dfs -mkdir /loginput
+2️⃣ hdfs dfs -put system_logs.txt /loginput
+3️⃣ hadoop jar LogAnalyzer.jar LogAnalyzer /loginput /logoutput
+4️⃣ hdfs dfs -cat /logoutput/part-r-00000
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The Log File Analyzer counts how many ERROR, WARN, and INFO entries exist in a system log file.
+This demonstrates how Hadoop MapReduce can efficiently process large log data in distributed systems.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is the purpose of this program?
+→ To count and categorize log messages from a system log file using Hadoop MapReduce.
+
+Q2. What are log levels?
+→ Log levels represent the type/severity of messages: INFO, WARN, ERROR, DEBUG, etc.
+
+Q3. How does the Mapper identify message types?
+→ By checking if each line contains keywords like “ERROR”, “INFO”, or “WARN”.
+
+Q4. What is the function of the Reducer here?
+→ To count total occurrences of each log type (INFO, ERROR, WARN).
+
+Q5. How is this useful in real-world systems?
+→ Helps monitor system health, error frequency, and performance from logs.
+
+Q6. Can this MapReduce job handle huge log files?
+→ Yes, MapReduce is designed for large-scale distributed processing.
+
+------------------------------------------------------------

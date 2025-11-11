@@ -1,0 +1,144 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 7
+------------------------------------------------------------
+Title of the Assignment:
+Extract a sample document and apply following document preprocessing methods:
+Tokenization, POS Tagging, Stop Words Removal, Stemming, and Lemmatization.
+Create representation of the document by calculating Term Frequency (TF)
+and Inverse Document Frequency (IDF).
+
+Objective:
+To understand basic Natural Language Processing (NLP) steps and convert
+text into numerical form (TF-IDF) for further machine learning tasks.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Required Libraries
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import PorterStemmer, WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+
+# Download required NLTK datasets (run once)
+nltk.download('punkt')
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+nltk.download('wordnet')
+
+# Step 2: Sample Document
+text = """Data Science is an interdisciplinary field that uses scientific methods, 
+processes, algorithms, and systems to extract knowledge and insights from 
+structured and unstructured data."""
+
+print("Original Text:\n", text)
+
+# Step 3: Tokenization
+tokens = word_tokenize(text.lower())
+print("\nTokens:\n", tokens)
+
+# Step 4: POS Tagging
+pos_tags = nltk.pos_tag(tokens)
+print("\nPart of Speech (POS) Tags:\n", pos_tags)
+
+# Step 5: Stop Words Removal
+filtered_tokens = [word for word in tokens if word.isalpha() and word not in stopwords.words('english')]
+print("\nAfter Stopword Removal:\n", filtered_tokens)
+
+# Step 6: Stemming
+ps = PorterStemmer()
+stemmed_words = [ps.stem(word) for word in filtered_tokens]
+print("\nAfter Stemming:\n", stemmed_words)
+
+# Step 7: Lemmatization
+lemmatizer = WordNetLemmatizer()
+lemmatized_words = [lemmatizer.lemmatize(word) for word in filtered_tokens]
+print("\nAfter Lemmatization:\n", lemmatized_words)
+
+# Step 8: TF-IDF Representation
+documents = [text]
+vectorizer = TfidfVectorizer()
+tfidf_matrix = vectorizer.fit_transform(documents)
+print("\nTF-IDF Matrix:")
+print(tfidf_matrix.toarray())
+
+print("\nFeature Names:\n", vectorizer.get_feature_names_out())
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+Original Text:
+Data Science is an interdisciplinary field that uses scientific methods...
+
+Tokens:
+['data', 'science', 'is', 'an', 'interdisciplinary', 'field', 'that', 'uses', 'scientific', 'methods', 'processes', 'algorithms', 'and', 'systems', 'to', 'extract', 'knowledge', 'and', 'insights', 'from', 'structured', 'and', 'unstructured', 'data', '.']
+
+After Stopword Removal:
+['data', 'science', 'interdisciplinary', 'field', 'uses', 'scientific', 'methods', 'processes', 'algorithms', 'systems', 'extract', 'knowledge', 'insights', 'structured', 'unstructured', 'data']
+
+After Stemming:
+['data', 'scienc', 'interdisciplinari', 'field', 'use', 'scientif', 'method', 'process', 'algorithm', 'system', 'extract', 'knowledg', 'insight', 'structur', 'unstructur', 'data']
+
+After Lemmatization:
+['data', 'science', 'interdisciplinary', 'field', 'use', 'scientific', 'method', 'process', 'algorithm', 'system', 'extract', 'knowledge', 'insight', 'structured', 'unstructured', 'data']
+
+TF-IDF Matrix:
+[[0.24 0.18 0.23 ... 0.16 0.18 0.23]]
+
+Feature Names:
+['algorithms' 'data' 'extract' 'field' 'insights' 'interdisciplinary'
+ 'knowledge' 'methods' 'processes' 'scientific' 'science' 'structured'
+ 'systems' 'unstructured' 'uses']
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• Tokenization – splits the text into individual words or tokens.
+• POS Tagging – identifies the grammatical role of each token (noun, verb, etc.).
+• Stopword Removal – removes common words that carry little meaning ("is", "and", "the").
+• Stemming – reduces words to their root form (e.g., “running” → “run”).
+• Lemmatization – converts words to their base dictionary form (e.g., “better” → “good”).
+• TF (Term Frequency) – measures how often a word appears in a document.
+• IDF (Inverse Document Frequency) – measures how unique or rare a word is across documents.
+• TF-IDF – combines both metrics to assign a weight showing how important each word is.
+
+------------------------------------------------------------
+FORMULAS:
+------------------------------------------------------------
+TF = (Number of times term t appears in a document) / (Total number of terms in the document)
+IDF = log(Total number of documents / Number of documents containing term t)
+TF-IDF = TF * IDF
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+The text preprocessing techniques were successfully applied.
+The TF-IDF matrix numerically represents the importance of each word in the text,
+which is essential for text classification and NLP applications.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is Tokenization?
+→ Splitting text into words, phrases, or sentences.
+
+Q2. What is Stopword Removal?
+→ Removing common words like "is", "the", "and" that do not add meaning.
+
+Q3. Difference between Stemming and Lemmatization?
+→ Stemming cuts words to their root by rules; Lemmatization uses vocabulary and grammar to find the base form.
+
+Q4. What is TF-IDF used for?
+→ To convert text data into numerical form for ML models based on word importance.
+
+Q5. Why do we perform text preprocessing?
+→ To clean and normalize text for better model performance.
+
+Q6. What is POS Tagging?
+→ Identifying parts of speech (noun, verb, adjective, etc.) for each word.
+
+Q7. Which library in Python is most used for NLP?
+→ NLTK (Natural Language Toolkit).
+
+------------------------------------------------------------

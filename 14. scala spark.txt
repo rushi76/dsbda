@@ -1,0 +1,121 @@
+------------------------------------------------------------
+DSBDA PRACTICAL (GROUP B) - 4
+------------------------------------------------------------
+Title of the Assignment:
+Write a simple program in SCALA using the Apache Spark framework.
+
+Objective:
+To understand the basic structure and execution of a Spark application 
+written in Scala and perform a simple WordCount operation using Spark RDDs.
+
+------------------------------------------------------------
+CODE (Scala):
+------------------------------------------------------------
+// Import required Spark libraries
+import org.apache.spark.{SparkConf, SparkContext}
+
+object SimpleSparkWordCount {
+  def main(args: Array[String]) {
+
+    // Step 1: Create Spark Configuration and Context
+    val conf = new SparkConf().setAppName("Simple WordCount").setMaster("local[*]")
+    val sc = new SparkContext(conf)
+
+    // Step 2: Load Input File
+    val inputFile = "input.txt"
+    val textFile = sc.textFile(inputFile)
+
+    // Step 3: Perform WordCount Operation
+    val counts = textFile
+      .flatMap(line => line.split("\\s+"))
+      .map(word => (word, 1))
+      .reduceByKey(_ + _)
+
+    // Step 4: Save Output
+    counts.saveAsTextFile("output")
+
+    // Step 5: Stop Spark Context
+    sc.stop()
+  }
+}
+
+------------------------------------------------------------
+SAMPLE INPUT (input.txt):
+------------------------------------------------------------
+Apache Spark is fast
+Spark runs on Hadoop
+Big Data is powerful with Spark
+
+------------------------------------------------------------
+SAMPLE OUTPUT (output/part-00000):
+------------------------------------------------------------
+(Apache,1)
+(Spark,3)
+(is,2)
+(fast,1)
+(runs,1)
+(on,1)
+(Hadoop,1)
+(Big,1)
+(Data,1)
+(powerful,1)
+(with,1)
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• SparkConf – Configures the Spark application (name, master mode).
+• SparkContext – Entry point for Spark functionality; connects to cluster.
+• textFile() – Reads input text file as an RDD.
+• flatMap() – Splits each line into words.
+• map() – Converts each word into a (word, 1) pair.
+• reduceByKey() – Adds up the values for each key (word count).
+• saveAsTextFile() – Saves the result to the output directory.
+
+------------------------------------------------------------
+HOW TO RUN IN SPARK (LOCAL MODE):
+------------------------------------------------------------
+1️⃣ Save file as: SimpleSparkWordCount.scala  
+2️⃣ Compile:  
+    scalac -classpath "$SPARK_HOME/jars/*" SimpleSparkWordCount.scala  
+3️⃣ Run:  
+    spark-submit --class SimpleSparkWordCount SimpleSparkWordCount.jar
+
+   OR directly run using:  
+    spark-shell  
+    :load SimpleSparkWordCount.scala  
+
+4️⃣ View output:  
+    cat output/part-00000
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+A simple Spark program in Scala was successfully executed to perform WordCount.
+It demonstrates the core concepts of RDD creation, transformation, and action in Apache Spark.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is Apache Spark?
+→ An open-source, distributed data processing framework for big data analytics.
+
+Q2. Difference between Hadoop MapReduce and Spark?
+→ Spark processes data in-memory (faster), while MapReduce writes intermediate results to disk.
+
+Q3. What are RDDs in Spark?
+→ Resilient Distributed Datasets – immutable collections of distributed objects processed in parallel.
+
+Q4. What are transformations and actions in Spark?
+→ Transformations create new RDDs (e.g., map, flatMap); Actions return results (e.g., count, save).
+
+Q5. What language does Spark support?
+→ Scala, Java, Python (PySpark), and R.
+
+Q6. Why is Spark faster than Hadoop?
+→ Spark performs computations in-memory without frequent disk I/O.
+
+Q7. What is the role of SparkContext?
+→ It connects the application to the Spark cluster and manages RDDs.
+
+------------------------------------------------------------

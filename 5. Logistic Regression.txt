@@ -1,0 +1,158 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 5
+------------------------------------------------------------
+Title of the Assignment:
+Implement Logistic Regression using Python to perform classification on Social_Network_Ads.csv dataset.
+Also compute Confusion Matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, and Recall.
+
+Objective:
+To understand and implement Logistic Regression for binary classification and evaluate model performance using confusion matrix metrics.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Required Libraries
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+# Step 2: Load dataset
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/SocialNetworkAds.csv"
+df = pd.read_csv(url)
+print("First 5 rows of dataset:")
+print(df.head())
+
+# Step 3: Select relevant columns
+X = df[['Age', 'EstimatedSalary']]
+y = df['Purchased']
+
+# Step 4: Split data into train/test sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=0)
+
+# Step 5: Feature Scaling (Normalization)
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+# Step 6: Create and train Logistic Regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Step 7: Predict on test data
+y_pred = model.predict(X_test)
+
+# Step 8: Compute Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print(cm)
+
+# Step 9: Calculate performance metrics
+TP = cm[1,1]
+TN = cm[0,0]
+FP = cm[0,1]
+FN = cm[1,0]
+
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred)
+recall = recall_score(y_test, y_pred)
+error_rate = 1 - accuracy
+
+print(f"\nTrue Positive (TP): {TP}")
+print(f"True Negative (TN): {TN}")
+print(f"False Positive (FP): {FP}")
+print(f"False Negative (FN): {FN}")
+print(f"\nAccuracy: {accuracy*100:.2f}%")
+print(f"Error Rate: {error_rate*100:.2f}%")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+
+# Step 10: Plot Decision Boundary (optional visualization)
+plt.scatter(X_test[:, 0], X_test[:, 1], c=y_pred, cmap='coolwarm', edgecolors='k')
+plt.title("Logistic Regression Decision Regions")
+plt.xlabel("Age (Scaled)")
+plt.ylabel("Estimated Salary (Scaled)")
+plt.show()
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+First 5 rows of dataset:
+   User ID  Gender  Age  EstimatedSalary  Purchased
+0  15624510  Male   19            19000          0
+1  15810944  Male   35            20000          0
+2  15668575  Female  26            43000          0
+
+Confusion Matrix:
+[[65  3]
+ [ 8 24]]
+
+True Positive (TP): 24
+True Negative (TN): 65
+False Positive (FP): 3
+False Negative (FN): 8
+
+Accuracy: 89.00%
+Error Rate: 11.00%
+Precision: 0.89
+Recall: 0.75
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• Logistic Regression – used for binary classification problems (output = 0 or 1).  
+• StandardScaler() – scales features to zero mean and unit variance.  
+• confusion_matrix() – shows classification performance summary.  
+• TP (True Positive): Correctly predicted positive cases.  
+• TN (True Negative): Correctly predicted negative cases.  
+• FP (False Positive): Predicted positive but actually negative.  
+• FN (False Negative): Predicted negative but actually positive.  
+• Accuracy – fraction of correctly predicted outcomes.  
+• Precision – ratio of correctly predicted positives to total predicted positives.  
+• Recall – ratio of correctly predicted positives to total actual positives.  
+• Error Rate – proportion of incorrect predictions.
+
+------------------------------------------------------------
+FORMULAS:
+------------------------------------------------------------
+Accuracy = (TP + TN) / (TP + TN + FP + FN)
+Error Rate = 1 - Accuracy
+Precision = TP / (TP + FP)
+Recall = TP / (TP + FN)
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+A Logistic Regression model was trained to classify users based on age and salary.
+It achieved around 89% accuracy. The confusion matrix and evaluation metrics demonstrate
+the performance of the model in identifying purchased and non-purchased users.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What type of problem does Logistic Regression solve?
+→ Classification problems (binary or multi-class).
+
+Q2. What is the difference between Linear and Logistic Regression?
+→ Linear predicts continuous values; Logistic predicts categorical outcomes (0/1).
+
+Q3. What is a sigmoid function?
+→ Converts linear output into probabilities between 0 and 1.
+
+Q4. What is a confusion matrix?
+→ A table that summarizes model prediction results.
+
+Q5. Define precision and recall.
+→ Precision = correctness of positive predictions.
+  Recall = how well positives are detected.
+
+Q6. Why do we perform feature scaling?
+→ To normalize features so that all contribute equally to the model.
+
+Q7. What are True Positive and False Negative?
+→ TP = correctly predicted positive cases, FN = positive cases missed by the model.
+
+------------------------------------------------------------

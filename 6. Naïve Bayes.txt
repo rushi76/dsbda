@@ -1,0 +1,125 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 6
+------------------------------------------------------------
+Title of the Assignment:
+Implement Simple Naïve Bayes Classification Algorithm using Python on iris.csv dataset.  
+Compute Confusion Matrix to find TP, FP, TN, FN, Accuracy, Error rate, Precision, and Recall.
+
+Objective:
+To understand the working of the Naïve Bayes algorithm and evaluate classification performance using confusion matrix metrics.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Libraries
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score
+
+# Step 2: Load Dataset
+url = "https://raw.githubusercontent.com/uiuc-cse/data-fa14/gh-pages/data/iris.csv"
+df = pd.read_csv(url)
+print("First 5 rows of dataset:")
+print(df.head())
+
+# Step 3: Separate Features and Target
+X = df.drop('species', axis=1)
+y = df['species']
+
+# Step 4: Split Data into Training and Test Sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Step 5: Train the Naïve Bayes Model
+model = GaussianNB()
+model.fit(X_train, y_train)
+
+# Step 6: Make Predictions
+y_pred = model.predict(X_test)
+
+# Step 7: Evaluate Model using Confusion Matrix
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix:")
+print(cm)
+
+# Step 8: Calculate Metrics
+accuracy = accuracy_score(y_test, y_pred)
+precision = precision_score(y_test, y_pred, average='weighted')
+recall = recall_score(y_test, y_pred, average='weighted')
+error_rate = 1 - accuracy
+
+print(f"\nAccuracy: {accuracy*100:.2f}%")
+print(f"Error Rate: {error_rate*100:.2f}%")
+print(f"Precision: {precision:.2f}")
+print(f"Recall: {recall:.2f}")
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+First 5 rows of dataset:
+   sepal_length  sepal_width  petal_length  petal_width     species
+0           5.1          3.5           1.4          0.2  setosa
+1           4.9          3.0           1.4          0.2  setosa
+2           4.7          3.2           1.3          0.2  setosa
+
+Confusion Matrix:
+[[19  0  0]
+ [ 0 13  1]
+ [ 0  1 11]]
+
+Accuracy: 95.56%
+Error Rate: 4.44%
+Precision: 0.96
+Recall: 0.96
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• GaussianNB() – Naïve Bayes classifier that assumes features follow a normal (Gaussian) distribution.  
+• The algorithm applies Bayes’ Theorem with an assumption of independence between features.  
+• It calculates probabilities of each class and selects the one with the highest posterior probability.  
+• Confusion matrix helps visualize how many predictions were correct or incorrect.  
+
+------------------------------------------------------------
+FORMULAS:
+------------------------------------------------------------
+Bayes Theorem:
+P(A|B) = [P(B|A) * P(A)] / P(B)
+
+Accuracy = (TP + TN) / (TP + TN + FP + FN)
+Error Rate = 1 - Accuracy
+Precision = TP / (TP + FP)
+Recall = TP / (TP + FN)
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+Naïve Bayes classification algorithm was applied successfully on the Iris dataset.
+The model achieved around 95% accuracy, proving it performs efficiently on small, clean datasets
+and is suitable for text or categorical data classification.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is Naïve Bayes Algorithm?
+→ A probabilistic classifier based on Bayes’ theorem assuming independence among predictors.
+
+Q2. Why is it called “Naïve”?
+→ Because it assumes all features are independent of each other — which is rarely true in reality.
+
+Q3. What is GaussianNB used for?
+→ For continuous (numeric) data assuming a normal (Gaussian) distribution.
+
+Q4. What are the advantages of Naïve Bayes?
+→ Fast, efficient, works well on small datasets, and good for text classification.
+
+Q5. What is the main limitation of Naïve Bayes?
+→ The assumption of feature independence may not hold true for complex datasets.
+
+Q6. What is the use of a confusion matrix?
+→ To show the number of correct and incorrect predictions made by the model.
+
+Q7. Define precision and recall in classification.
+→ Precision = correctness of positive predictions, Recall = coverage of actual positives.
+
+------------------------------------------------------------

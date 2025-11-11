@@ -1,0 +1,138 @@
+------------------------------------------------------------
+DSBDA PRACTICAL 1
+------------------------------------------------------------
+Title of the Assignment:
+Perform the following operations using Python on any open-source dataset (e.g., data.csv)
+
+Objective:
+To perform data loading, preprocessing, formatting, and normalization operations using Python.
+
+------------------------------------------------------------
+STEPS / OPERATIONS:
+------------------------------------------------------------
+1. Import all the required Python Libraries.
+2. Locate an open-source dataset from the web (e.g., https://www.kaggle.com).
+3. Load the Dataset into a pandas DataFrame.
+4. Perform Data Preprocessing:
+   - Check for missing values
+   - Display initial statistics
+   - Check dataset dimensions
+5. Data Formatting and Normalization:
+   - Verify data types and convert where needed.
+6. Turn categorical variables into quantitative variables.
+
+------------------------------------------------------------
+CODE:
+------------------------------------------------------------
+# Step 1: Import Required Libraries
+import pandas as pd
+import numpy as np
+
+# Step 2: Load dataset (You can use Titanic dataset or any CSV)
+url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
+df = pd.read_csv(url)
+
+# Step 3: Display first 5 rows
+print("First 5 rows of dataset:")
+print(df.head())
+
+# Step 4: Get dataset information
+print("\nDataset Information:")
+print(df.info())
+
+# Step 5: Check for missing values
+print("\nMissing Values per Column:")
+print(df.isnull().sum())
+
+# Step 6: Basic Statistics
+print("\nDescriptive Statistics:")
+print(df.describe())
+
+# Step 7: Check dimensions of data frame
+print("\nShape of the dataset:", df.shape)
+
+# Step 8: Check data types of variables
+print("\nData Types:")
+print(df.dtypes)
+
+# Step 9: Convert columns to proper data types
+df['Survived'] = df['Survived'].astype('category')
+df['Pclass'] = df['Pclass'].astype('category')
+
+# Step 10: Handle missing values (fill missing 'Age' with mean)
+df['Age'].fillna(df['Age'].mean(), inplace=True)
+
+# Step 11: Encode categorical variables (Sex column)
+df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
+
+# Step 12: Normalize numeric columns (example: Age, Fare)
+df['Age'] = (df['Age'] - df['Age'].min()) / (df['Age'].max() - df['Age'].min())
+df['Fare'] = (df['Fare'] - df['Fare'].min()) / (df['Fare'].max() - df['Fare'].min())
+
+# Step 13: Display final processed data
+print("\nProcessed Data (first 5 rows):")
+print(df.head())
+
+------------------------------------------------------------
+SAMPLE OUTPUT:
+------------------------------------------------------------
+First 5 rows of dataset:
+   PassengerId  Survived  Pclass     Name   Sex   Age  SibSp  Parch     Fare Embarked
+0            1         0       3  Braund, Mr. Owen Harris  male  22.0      1      0   7.25        S
+1            2         1       1  Cumings, Mrs. John Bradley (Florence Briggs Thayer) female  38.0      1      0  71.2833        C
+...
+
+Missing Values:
+Age         177
+Cabin       687
+Embarked      2
+
+Descriptive Statistics:
+          PassengerId      Age      SibSp      Parch        Fare
+count      891.000000  891.000000  891.000000  891.000000  891.000000
+mean       446.000000    0.362817    0.523008    0.381594    0.066000
+...
+
+Data Shape: (891, 12)
+
+After Encoding and Normalization:
+   PassengerId  Survived  Pclass  Sex       Age  SibSp  Parch      Fare
+0            1         0       3    0  0.271174      1      0  0.014151
+1            2         1       1    1  0.472229      1      0  0.139136
+...
+
+------------------------------------------------------------
+EXPLANATION OF KEY STEPS:
+------------------------------------------------------------
+• isnull() – Detects missing values in each column.
+• describe() – Gives basic statistical summary (mean, std, etc.).
+• astype() – Changes data type (e.g., integer to categorical).
+• fillna() – Replaces missing data (e.g., mean imputation).
+• map() – Converts text labels (male/female) to numeric.
+• Normalization – Scales numeric values between 0 and 1.
+
+------------------------------------------------------------
+CONCLUSION:
+------------------------------------------------------------
+We successfully loaded, cleaned, formatted, and normalized an open-source dataset.
+This process ensures the dataset is ready for further analysis or machine learning.
+
+------------------------------------------------------------
+VIVA QUESTIONS:
+------------------------------------------------------------
+Q1. What is data wrangling?
+→ The process of cleaning, transforming, and preparing raw data for analysis.
+
+Q2. Why is normalization needed?
+→ To scale values within a range (0–1) so that all features contribute equally.
+
+Q3. What is data encoding?
+→ Converting categorical (string) data into numeric form for ML algorithms.
+
+Q4. What is the difference between mean and median imputation?
+→ Mean replaces missing values with average; median replaces with middle value.
+
+Q5. What function is used to detect missing values?
+→ pandas.isnull() or pandas.isna().
+
+------------------------------------------------------------
