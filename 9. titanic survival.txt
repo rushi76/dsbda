@@ -27,6 +27,9 @@ print("\nMissing values in 'age' column:", titanic['age'].isnull().sum())
 # Step 4: Drop Missing Age Values (for simplicity)
 titanic = titanic.dropna(subset=['age'])
 
+#(OPTIONAL/ CHECK FIRST) Convert survived column to categorical labels for proper hue coloring
+titanic['survived'] = titanic['survived'].map({0: 'No', 1: 'Yes'})
+
 # Step 5: Plot Box Plot
 plt.figure(figsize=(8,6))
 sns.boxplot(x='sex', y='age', hue='survived', data=titanic, palette='coolwarm')
@@ -96,3 +99,4 @@ Q6. Why are females shown to have higher survival?
 → Due to priority evacuation policy ("women and children first") during the disaster.
 
 ------------------------------------------------------------
+
